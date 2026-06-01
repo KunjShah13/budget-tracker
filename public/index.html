@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker</title>
+  <base href="/budget/">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>💰 Budget Tracker</h1>
+    <nav>
+      <select id="month-selector"></select>
+      <a href="splits" class="btn-secondary" style="display:inline-block; text-align:center; text-decoration:none;">Splits</a>
+      <button id="download-btn">Download CSV</button>
+      <button id="logout-btn">Logout</button>
+    </nav>
+  </header>
+  
+  <main class="app-layout">
+    <!-- LEFT: Form -->
+    <section class="form-card">
+      <h2 id="form-title">Add Expense</h2>
+      <form id="expense-form">
+        <input type="hidden" id="edit-id" value="">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="field-date" required>
+          </div>
+          <div class="form-group">
+            <label>Amount (₹)</label>
+            <input type="number" id="field-amount" step="0.01" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="field-description" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Payment Mode</label>
+            <select id="field-payment-mode" required></select>
+          </div>
+          <div class="form-group">
+            <label>Sub-category</label>
+            <select id="field-subcategory" required></select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Category</label>
+          <select id="field-category" required></select>
+        </div>
+        
+        <!-- Splitwise Toggle -->
+        <div class="form-group">
+          <label>Splitwise</label>
+          <div class="toggle-group" id="splitwise-toggle">
+            <button type="button" class="toggle-btn active" data-value="No">No</button>
+            <button type="button" class="toggle-btn" data-value="Yes">Yes</button>
+          </div>
+        </div>
+        
+        <!-- Split Details -->
+        <div class="split-section" id="split-section" style="display:none">
+          <div class="form-group">
+            <label>Split with</label>
+            <div class="people-checkboxes" id="split-people">
+              <!-- Checkboxes populated by JS -->
+            </div>
+            <input type="text" id="others-name" placeholder="Enter name" style="display:none">
+          </div>
+          
+          <div class="form-group">
+            <label>Split Type</label>
+            <div class="toggle-group" id="split-type-toggle">
+              <button type="button" class="toggle-btn active" data-value="equal">Equal</button>
+              <button type="button" class="toggle-btn" data-value="custom">Custom</button>
+            </div>
+          </div>
+          
+          <div id="custom-amounts" style="display:none; margin-bottom: 16px;">
+            <!-- Dynamically generated per person -->
+          </div>
+          
+          <div class="form-group">
+            <label>Who Paid?</label>
+            <select id="field-paid-by"></select>
+          </div>
+        </div>
+        
+        <button type="submit" id="submit-btn" class="btn-primary">Add Expense</button>
+        <button type="button" id="cancel-edit-btn" style="display:none" class="btn-secondary">Cancel</button>
+      </form>
+    </section>
+    
+    <!-- RIGHT: Entries -->
+    <section class="entries-card">
+      <h2>Recent Entries</h2>
+      
+      <!-- Desktop: table -->
+      <div class="table-wrapper desktop-only">
+        <table id="entries-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Mode</th>
+              <th>Sub-cat</th>
+              <th>Cat</th>
+              <th>Split</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="entries-tbody"></tbody>
+        </table>
+      </div>
+      
+      <!-- Mobile: cards -->
+      <div class="entries-cards mobile-only" id="entries-cards"></div>
+      
+      <!-- Totals -->
+      <div class="totals-bar" id="totals-bar">
+        <span>Total Expenses (Red)</span>
+        <span class="amt" id="total-amount">₹0.00</span>
+      </div>
+    </section>
+  </main>
+  
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+  
+  <!-- Delete Modal -->
+  <div class="modal-overlay" id="delete-modal" style="display:none">
+    <div class="modal-card">
+      <p>Delete this expense?</p>
+      <input type="hidden" id="delete-id" value="">
+      <div class="modal-actions">
+        <button id="confirm-delete-btn">Delete</button>
+        <button id="cancel-delete-btn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

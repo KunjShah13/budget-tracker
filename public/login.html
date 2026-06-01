@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker - Login</title>
+  <base href="/budget/">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <h2>💰 Budget Tracker</h2>
+      <p>Enter your password to continue</p>
+      
+      <div id="login-error" style="display: none;"></div>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <input type="password" id="password-input" placeholder="Password (min 10 chars)" required minlength="10">
+        </div>
+        <button type="submit" id="login-btn" class="btn-primary">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
