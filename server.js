@@ -6,6 +6,7 @@ const csvHandler = require('./csv-handler');
 const sqliteHandler = require('./sqlite-handler');
 const splitHandler = require('./split-handler');
 const configHandler = require('./config-handler');
+const dashboardHandler = require('./dashboard-handler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -63,6 +64,14 @@ router.get('/splits', (req, res) => {
   }
 });
 
+router.get('/dashboard', (req, res) => {
+  if (req.signedCookies.auth_token === 'authenticated') {
+    res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+  } else {
+    res.redirect('/budget/login');
+  }
+});
+
 // Serve static assets without auth (CSS, JS, etc.)
 router.use(express.static(path.join(__dirname, 'public')));
 
@@ -89,6 +98,20 @@ router.post('/api/auth/login', (req, res) => {
 router.post('/api/auth/logout', (req, res) => {
   res.clearCookie('auth_token', { path: '/budget' });
   res.json({ success: true });
+});
+
+router.get('/api/dashboard/cashflow', requireAuth, (req, res) => {
+  try {
+    const data = dashboardHandler.buildCashflowDashboard({
+      selectedMonth: req.query.month,
+      compareMonths: req.query.months,
+      includeTransfers: String(req.query.includeTransfers || '').toLowerCase() === 'true'
+    });
+    res.json(data);
+  } catch (error) {
+    console.error('Error loading dashboard cashflow:', error);
+    res.status(500).json({ error: 'Failed to load dashboard' });
+  }
 });
 
 router.post('/api/expense', requireAuth, (req, res) => {

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker - Dashboard</title>
+  <base href="/budget/">
+  <link rel="stylesheet" href="css/style.css?v=1780369500">
+</head>
+<body>
+  <header>
+    <h1>📊 Cashflow Dashboard</h1>
+    <nav>
+      <a href="./" class="btn-secondary" style="display:inline-block; text-align:center; text-decoration:none;">Tracker</a>
+      <a href="splits" class="btn-secondary" style="display:inline-block; text-align:center; text-decoration:none;">Splits</a>
+      <a href="settings" class="btn-secondary" style="display:inline-block; text-align:center; text-decoration:none;">Settings</a>
+      <button id="logout-btn">Logout</button>
+    </nav>
+  </header>
+
+  <main class="dashboard-page">
+    <section class="dashboard-controls-card">
+      <div class="dashboard-controls-top">
+        <div>
+          <p class="eyebrow">Cashflow overview</p>
+          <h2 id="selected-month-title">Selected month</h2>
+          <p class="dashboard-subtle">Derived analytics only — raw transactions stay untouched.</p>
+        </div>
+        <div class="dashboard-toggle-row">
+          <label class="switch-row">
+            <input type="checkbox" id="include-transfers-toggle">
+            <span>Include transfers in charts</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="dashboard-filter-grid">
+        <div class="form-group">
+          <label for="selected-month">Focus month</label>
+          <select id="selected-month"></select>
+        </div>
+
+        <div class="form-group compare-picker-group">
+          <label>Compare months</label>
+          <details class="compare-picker" id="compare-picker">
+            <summary>
+              <span id="compare-summary-text">Select months</span>
+              <span class="compare-summary-hint">▼</span>
+            </summary>
+            <div class="compare-picker-panel">
+              <div class="compare-picker-actions">
+                <button type="button" class="btn-secondary" id="compare-last-6-btn">Last 6</button>
+                <button type="button" class="btn-secondary" id="compare-clear-btn">Clear</button>
+              </div>
+              <div id="compare-month-checkboxes" class="compare-month-checkboxes"></div>
+              <button type="button" class="btn-primary compare-apply-btn" id="compare-apply-btn">Apply months</button>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-summary-grid" id="summary-cards"></section>
+
+    <section class="dashboard-main-grid">
+      <div class="dashboard-panel dashboard-panel-wide">
+        <div class="panel-header">
+          <div>
+            <h3>Month-wise cashflow</h3>
+            <p id="trend-subtitle" class="panel-subtitle">Comparing selected months</p>
+          </div>
+        </div>
+        <div id="trend-legend" class="chart-legend"></div>
+        <div id="trend-chart" class="trend-chart"></div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Compared months</h3>
+            <p class="panel-subtitle">Quick net / inflow / outflow scan</p>
+          </div>
+        </div>
+        <div id="compare-table" class="compare-table"></div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Outflow by category</h3>
+            <p class="panel-subtitle" id="category-subtitle">Selected month breakdown</p>
+          </div>
+        </div>
+        <div id="category-breakdown" class="breakdown-list"></div>
+      </div>
+
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Outflow by payment mode</h3>
+            <p class="panel-subtitle">Selected month source split</p>
+          </div>
+        </div>
+        <div id="payment-breakdown" class="breakdown-list"></div>
+      </div>
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="panel-header">
+        <div>
+          <h3>Top outflows</h3>
+          <p class="panel-subtitle">Largest selected-month debits</p>
+        </div>
+      </div>
+      <div id="top-transactions" class="top-transactions-list"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/config.js?v=1780369500"></script>
+  <script src="js/auth.js?v=1780369500"></script>
+  <script src="js/dashboard.js?v=1780369500"></script>
+</body>
+</html>
