@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (typeof CONFIG === 'undefined') return;
-  
+
+  if (typeof loadUserConfig === 'function') { await loadUserConfig(); }
+
   initMonthSelector();
   document.getElementById('logout-btn').addEventListener('click', handleLogout);
   

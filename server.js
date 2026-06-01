@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const csvHandler = require('./csv-handler');
 const splitHandler = require('./split-handler');
+const configHandler = require('./config-handler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,6 +40,14 @@ router.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+router.get('/settings', (req, res) => {
+  if (req.signedCookies.auth_token === 'authenticated') {
+    res.sendFile(path.join(__dirname, 'public', 'settings.html'));
+  } else {
+    res.redirect('/budget/login');
+  }
+});
+
 router.get('/splits', (req, res) => {
   if (req.signedCookies.auth_token === 'authenticated') {
     res.sendFile(path.join(__dirname, 'public', 'splits.html'));
@@ -58,6 +67,8 @@ router.post('/api/auth/login', (req, res) => {
   if (password === AUTH_PASSWORD) {
     res.cookie('auth_token', 'authenticated', {
       httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
       signed: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       path: '/budget'
@@ -219,6 +230,25 @@ router.get('/api/months', requireAuth, (req, res) => {
   } catch (error) {
     console.error('Error fetching months:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Config routes
+router.get('/api/config', requireAuth, (req, res) => {
+  try {
+    res.json(configHandler.readConfig());
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to read config' });
+  }
+});
+
+router.post('/api/config', requireAuth, (req, res) => {
+  try {
+    const saved = configHandler.writeConfig(req.body);
+    res.json({ success: true, config: saved });
+  } catch (e) {
+    console.error('Config save error:', e);
+    res.status(400).json({ error: e.message });
   }
 });
 

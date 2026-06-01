@@ -27,3 +27,29 @@ const CONFIG = {
   
   API_BASE: '/budget/api'
 };
+
+// Fetch user-saved config from server and merge into CONFIG.
+// Falls back silently to hardcoded defaults above if the request fails.
+async function loadUserConfig() {
+  try {
+    const res = await fetch(`${CONFIG.API_BASE}/config`);
+    if (res.status === 401) {
+      window.location.href = '/budget/login';
+      return;
+    }
+    if (!res.ok) return;
+    const data = await res.json();
+
+    if (data.paymentModes && typeof data.paymentModes === 'object') {
+      CONFIG.PAYMENT_MODES = data.paymentModes;
+    }
+    if (Array.isArray(data.creditCardModes)) {
+      CONFIG.CREDIT_CARD_MODES = data.creditCardModes;
+    }
+    if (Array.isArray(data.splitPeople)) {
+      CONFIG.SPLIT_PEOPLE = data.splitPeople;
+    }
+  } catch (e) {
+    console.warn('Using default config (failed to load user config):', e.message);
+  }
+}

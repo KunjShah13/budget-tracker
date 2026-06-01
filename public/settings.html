@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker - Settings</title>
+  <base href="/budget/">
+  <link rel="stylesheet" href="css/style.css?v=1780306003">
+  <style>
+    .settings-container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    .settings-section {
+      background-color: #141414;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .settings-section h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Groups (Payment Mode groups) */
+    .group-block {
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a1a1a;
+      padding: 10px 14px;
+    }
+
+    .group-name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .group-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .group-items {
+      padding: 10px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Tags / chips */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #222;
+      border: 1px solid #333;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 13px;
+    }
+
+    .tag.credit-card {
+      border-color: #eab308;
+      color: #eab308;
+    }
+
+    .tag-remove {
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .tag-remove:hover { color: #ef4444; }
+
+    /* Inline add row */
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    .add-row input {
+      flex: 1;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .add-row input:focus {
+      outline: none;
+      border-color: #555;
+    }
+
+    .add-row input::placeholder { color: #555; }
+
+    .btn-add {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover { background: #222; }
+
+    .btn-icon {
+      background: none;
+      border: 1px solid #333;
+      color: #888;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-icon:hover { color: #fff; border-color: #555; }
+
+    .btn-danger-icon {
+      background: none;
+      border: 1px solid #333;
+      color: #888;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-danger-icon:hover { color: #ef4444; border-color: #ef4444; }
+
+    /* New group form */
+    .new-group-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .new-group-row input {
+      flex: 1;
+      background: #0a0a0a;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .new-group-row input:focus { outline: none; border-color: #555; }
+
+    /* Credit card toggle */
+    .cc-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    .cc-toggle input[type="checkbox"] {
+      accent-color: #eab308;
+      width: 14px;
+      height: 14px;
+    }
+
+    /* People list */
+    .people-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    /* Save button */
+    .save-bar {
+      position: sticky;
+      bottom: 0;
+      background: #0a0a0a;
+      border-top: 1px solid #222;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { background: #ddd; }
+
+    .section-hint {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 14px;
+    }
+
+    /* Modal for confirm delete group */
+    #confirm-group-modal .modal-card p { margin-bottom: 16px; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚙️ Settings</h1>
+  <nav>
+    <a href="./" class="btn-secondary">← Back</a>
+    <button id="logout-btn">Logout</button>
+  </nav>
+</header>
+
+<div class="settings-container">
+
+  <!-- PAYMENT MODES -->
+  <div class="settings-section">
+    <h2>💳 Payment Modes</h2>
+    <p class="section-hint">Grouped by type. Yellow-tagged items are counted as Credit Card in totals.</p>
+    <div id="payment-groups"></div>
+    <div class="new-group-row">
+      <input type="text" id="new-group-name" placeholder="New group name (e.g. UPI)">
+      <button class="btn-add" onclick="addGroup()">+ Add Group</button>
+    </div>
+  </div>
+
+  <!-- SPLIT PEOPLE -->
+  <div class="settings-section">
+    <h2>🤝 Split People</h2>
+    <p class="section-hint">"Self" is always included and cannot be removed.</p>
+    <div class="people-list" id="split-people-list"></div>
+    <div class="add-row">
+      <input type="text" id="new-person-name" placeholder="Add person (e.g. Rahul)">
+      <button class="btn-add" onclick="addPerson()">+ Add</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sticky save bar -->
+<div class="save-bar">
+  <span id="save-status" style="font-size:13px; color:#666; align-self:center;"></span>
+  <button class="btn-primary" onclick="saveConfig()">Save Changes</button>
+</div>
+
+<!-- Delete group confirm modal -->
+<div class="modal-overlay" id="confirm-group-modal" style="display:none">
+  <div class="modal-card">
+    <p id="confirm-group-msg">Delete this group and all its items?</p>
+    <div class="modal-actions">
+      <button id="confirm-group-btn" class="btn-primary" style="background:#ef4444; color:#fff;">Delete</button>
+      <button class="btn-secondary" style="flex:1" onclick="closeGroupModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/config.js?v=1780306003"></script>
+<script src="js/auth.js?v=1780306003"></script>
+<script src="js/settings.js?v=1780306003"></script>
+</body>
+</html>

@@ -1,7 +1,10 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Wait for config and auth functions to be available
   if (typeof CONFIG === 'undefined') return;
-  
+
+  // Load user-saved config (payment modes, split people) from server
+  if (typeof loadUserConfig === 'function') { await loadUserConfig(); }
+
   // Initialization
   initFormFields();
   initSplitwiseToggle();

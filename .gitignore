@@ -1,0 +1,12 @@
+# Secrets
+.env
+
+# Dependencies
+node_modules/
+
+# User data (config + expenses)
+data/
+
+# Logs
+*.log
+npm-debug.log*
