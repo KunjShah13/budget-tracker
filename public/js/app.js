@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('confirm-delete-btn').addEventListener('click', confirmDelete);
   document.getElementById('cancel-delete-btn').addEventListener('click', closeDeleteModal);
   
-  // Set default date
-  document.getElementById('field-date').valueAsDate = new Date();
+  // Set default date + max allowed date
+  const dateField = document.getElementById('field-date');
+  const todayIso = getTodayIsoDate();
+  dateField.value = todayIso;
+  dateField.max = todayIso;
   
   // Load initial data
   const now = new Date();
@@ -363,6 +366,14 @@ function renderEntries() {
   document.getElementById('total-amount').textContent = formatAmount(totalRed);
 }
 
+function getTodayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function isFutureDate(dateStr) {
+  return Boolean(dateStr) && dateStr > getTodayIsoDate();
+}
+
 // --- FORM HANDLING ---
 async function handleFormSubmit(e) {
   e.preventDefault();
@@ -374,6 +385,11 @@ async function handleFormSubmit(e) {
   const subCategory = document.getElementById('field-subcategory').value;
   const category = document.getElementById('field-category').value;
   
+  if (isFutureDate(dateInput)) {
+    showToast('Date cannot be greater than today');
+    return;
+  }
+
   const splitBtn = document.querySelector('#splitwise-toggle .active');
   const splitwise = splitBtn ? splitBtn.dataset.value : 'No';
   

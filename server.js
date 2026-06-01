@@ -3,6 +3,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const csvHandler = require('./csv-handler');
+const sqliteHandler = require('./sqlite-handler');
 const splitHandler = require('./split-handler');
 const configHandler = require('./config-handler');
 
@@ -23,6 +24,12 @@ function requireAuth(req, res, next) {
   } else {
     res.status(401).json({ error: 'Unauthorized' });
   }
+}
+
+function isFutureDate(dateStr) {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr))) return false;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  return dateStr > todayIso;
 }
 
 // ----------------------------------------------------
@@ -92,7 +99,11 @@ router.post('/api/expense', requireAuth, (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const expense = csvHandler.addExpense({
+    if (isFutureDate(date)) {
+      return res.status(400).json({ error: 'Date cannot be greater than today' });
+    }
+
+    const expense = sqliteHandler.addExpense({
       date, description, amount, paymentMode, subCategory, category, splitwise
     });
 
@@ -116,8 +127,8 @@ router.get('/api/expenses', requireAuth, (req, res) => {
     const month = parseInt(req.query.month) || (now.getMonth() + 1);
     const year = parseInt(req.query.year) || now.getFullYear();
 
-    const expenses = csvHandler.readExpenses(month, year);
-    const availableMonths = csvHandler.getAvailableMonths();
+    const expenses = sqliteHandler.readExpenses(month, year);
+    const availableMonths = sqliteHandler.getAvailableMonths();
 
     res.json({ expenses, availableMonths });
   } catch (error) {
@@ -139,7 +150,11 @@ router.put('/api/expense/:id', requireAuth, (req, res) => {
     const m = parseInt(month);
     const y = parseInt(year);
 
-    const expense = csvHandler.updateExpense(id, expenseData, m, y);
+    if (expenseData.date && isFutureDate(expenseData.date)) {
+      return res.status(400).json({ error: 'Date cannot be greater than today' });
+    }
+
+    const expense = sqliteHandler.updateExpense(id, expenseData, m, y);
     if (!expense) {
       return res.status(404).json({ error: 'Expense not found' });
     }
@@ -169,7 +184,7 @@ router.delete('/api/expense/:id', requireAuth, (req, res) => {
     const m = parseInt(month);
     const y = parseInt(year);
 
-    const success = csvHandler.deleteExpense(id, m, y);
+    const success = sqliteHandler.deleteExpense(id, m, y);
     if (success) {
       splitHandler.deleteSplit(id, m, y);
       res.json({ success: true });
@@ -188,7 +203,7 @@ router.get('/api/download', requireAuth, (req, res) => {
     const month = parseInt(req.query.month) || (now.getMonth() + 1);
     const year = parseInt(req.query.year) || now.getFullYear();
 
-    const csvContent = csvHandler.getCSVContent(month, year);
+    const csvContent = sqliteHandler.getCSVContent(month, year);
     if (!csvContent) {
       return res.status(404).send('File not found');
     }
@@ -211,7 +226,7 @@ router.get('/api/splits', requireAuth, (req, res) => {
 
     const splits = splitHandler.getSplits(month, year);
     const settlement = splitHandler.getSettlement(month, year);
-    const allExpenses = csvHandler.readExpenses(month, year);
+    const allExpenses = sqliteHandler.readExpenses(month, year);
     
     // Only return expenses that have a split
     const expenses = allExpenses.filter(e => splits[e.id]);
@@ -225,7 +240,7 @@ router.get('/api/splits', requireAuth, (req, res) => {
 
 router.get('/api/months', requireAuth, (req, res) => {
   try {
-    const months = csvHandler.getAvailableMonths();
+    const months = sqliteHandler.getAvailableMonths();
     res.json({ months });
   } catch (error) {
     console.error('Error fetching months:', error);
