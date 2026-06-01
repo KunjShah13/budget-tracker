@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  budget-tracker:
+    build: .
+    container_name: budget-tracker
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_PASSWORD=${AUTH_PASSWORD:-changeme12345}
+      - PORT=3000
+      - SESSION_SECRET=${SESSION_SECRET:-your_random_secret_here_min_32_chars}
+    volumes:
+      - ./data:/app/data
